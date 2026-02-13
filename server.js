@@ -6,9 +6,7 @@ const customerRoutes = require("./routes/webhooks");
 
 const app = express();
 
-// 👇 EXACT SAME public URLs as before
-app.use("/", customerRoutes);
-// app.use("/", orderRoutes);
+app.use("/api", customerRoutes);
 
 app.get("/", (req, res) => {
   res.send("Server is running");
