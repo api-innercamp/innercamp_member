@@ -20,7 +20,7 @@ exports.addMemberToMighty = async ({ email, firstName, lastName }) => {
   );
 
   const data = await response.json();
-console.log("Data Aya ",data);
+
   return {
     ok: response.ok,
     data,

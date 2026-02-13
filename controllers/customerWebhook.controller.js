@@ -20,14 +20,11 @@ exports.customerCreateWebhook = async (req, res) => {
     });
 
     if (!result.ok) {
-      console.log("Mighty skipped / exists:", result.data);
       return res.status(200).send("Already exists");
     }
 
-    console.log("Mighty member created:", result.data);
     res.status(200).send("Customer synced");
   } catch (error) {
-    console.error("Customer webhook error:", error);
     res.status(500).send("Failed");
   }
 };

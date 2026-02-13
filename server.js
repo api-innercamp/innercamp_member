@@ -2,7 +2,6 @@ const express = require("express");
 require("dotenv").config();
 
 const customerRoutes = require("./routes/webhooks");
-// const orderRoutes = require("./routes/order.routes");
 
 const app = express();
 

@@ -67,7 +67,6 @@ exports.orderCreateWebhook = async (req, res) => {
     const result = await response.json();
 
     if (result.errors) {
-      console.error("❌ GraphQL errors:", result.errors);
       return res.status(500).send("GraphQL failed");
     }
 
@@ -95,15 +94,8 @@ exports.orderCreateWebhook = async (req, res) => {
       };
     });
 
-    /* ---------------- RESULT ---------------- */
-    console.log(
-      "✅ Variants with variant_plan_url:",
-      JSON.stringify(variantsWithPlanUrl, null, 2)
-    );
-
     res.status(200).send("Order processed");
   } catch (error) {
-    console.error("❌ Order webhook error:", error);
     res.status(500).send("Failed");
   }
 };

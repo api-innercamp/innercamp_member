@@ -9,10 +9,6 @@ const {
   orderCreateWebhook,
 } = require("../controllers/orderWebhook.controller");
 
-/**
- * CUSTOMER CREATE
- * FINAL URL: /webhooks/create
- */
 
 router.post(
   "/create",
@@ -20,11 +16,6 @@ router.post(
   customerCreateWebhook
 );
 
-
-/**
- * ORDER CREATE
- * FINAL URL: /webhooks/orders/create
- */
 router.post(
   "/orders/create",
   express.raw({ type: "application/json" }),
