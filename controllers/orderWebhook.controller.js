@@ -1,4 +1,5 @@
 const crypto = require("crypto");
+const { variantToPlanID } = require("../services/mighty.service");
 const fetch = (...args) =>
   import("node-fetch").then(({ default: fetch }) => fetch(...args));
 
@@ -21,6 +22,7 @@ exports.orderCreateWebhook = async (req, res) => {
 
     /* ---------------- ORDER DATA ---------------- */
     const order = JSON.parse(rawBody.toString());
+    const customer_email = order.customer.email;
 
     const variantIds = order.line_items
       .filter(item => item.variant_id)
@@ -38,7 +40,7 @@ exports.orderCreateWebhook = async (req, res) => {
             ... on ProductVariant {
               id
               title
-              metafield(namespace: "custom", key: "variant_plan_url") {
+              metafield(namespace: "custom", key: "variant_plan_id") {
                 key
                 value
                 jsonValue
@@ -65,7 +67,7 @@ exports.orderCreateWebhook = async (req, res) => {
     );
 
     const result = await response.json();
-
+    //console.log("result",result.data.nodes);
     if (result.errors) {
       return res.status(500).send("GraphQL failed");
     }
@@ -78,22 +80,43 @@ exports.orderCreateWebhook = async (req, res) => {
 
       variantMap.set(variant.id, {
         title: variant.title,
-        plan_url:
+        variant_plan_id:
           variant.metafield?.jsonValue ??
           variant.metafield?.value ??
           null,
       });
     });
+    //console.log("variantMap",variantMap);
+const variantsWithPlanUrl = await Promise.all(
+  Array.from(variantMap.entries()).map(async ([variantId, item]) => {
+    const variantPlanId = item?.variant_plan_id || null;
 
-    const variantsWithPlanUrl = order.line_items.map(item => {
-      const gid = `gid://shopify/ProductVariant/${item.variant_id}`;
+    if (variantPlanId) {
+      console.log("variant_plan_id:", variantPlanId);
+
+      const planIdDataGet = await variantToPlanID({
+        planID: variantPlanId,
+        customer_email: customer_email,
+      });
+
+      console.log("planID:", planIdDataGet);
+
       return {
-        product_title: item.title,
-        variant_id: item.variant_id,
-        variant_plan_url: variantMap.get(gid)?.plan_url || null,
+        variantId,
+        ...item,
+        planData: planIdDataGet,
       };
-    });
+    }
 
+    return {
+      variantId,
+      ...item,
+    };
+  })
+);
+
+//console.log("variantsWithPlanUrl:", variantsWithPlanUrl);
+    
     res.status(200).send("Order processed");
   } catch (error) {
     res.status(500).send("Failed");

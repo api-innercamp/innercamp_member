@@ -10,16 +10,16 @@ const {
 } = require("../controllers/orderWebhook.controller");
 
 
-router.post(
-  "/create",
-  express.raw({ type: "application/json" }),
-  customerCreateWebhook
-);
-
 // router.post(
-//   "/orders/create",
+//   "/create",
 //   express.raw({ type: "application/json" }),
-//   orderCreateWebhook
+//   customerCreateWebhook
 // );
+
+router.post(
+  "/orders/create",
+  express.raw({ type: "application/json" }),
+  orderCreateWebhook
+);
 
 module.exports = router;

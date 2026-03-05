@@ -26,3 +26,23 @@ exports.addMemberToMighty = async ({ email, firstName, lastName }) => {
     data,
   };
 };
+
+exports.variantToPlanID = async ({ planID, customer_email  }) => {
+  const response = await fetch(
+    `https://api.mn.co/admin/v1/networks/${process.env.MN_NETWORK_ID}/plans/${planID }/invites?email=${customer_email}`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.MN_TOKEN}`,
+        "Content-Type": "application/json",
+      }
+    }
+  );
+
+  const data = await response.json();
+
+  return {
+    ok: response.ok,
+    data,
+  };
+};
